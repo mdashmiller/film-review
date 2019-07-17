@@ -1,35 +1,32 @@
 import React, { Component } from 'react'
 import MovieCard from './components/MovieCard'
+import KEYS from './keys'
 
-const movieData = [
-  {
-    title: 'Avengers: Infinity War',
-    year: '2018',
-    description: 'Iron Man, Thor, the Hulk and the rest of the Avengers unite to battle their most powerful enemy yet -- the evil Thanos. On a mission to collect all six Infinity Stones, Thanos plans to use the artifacts to inflict his twisted will on reality.',
-    imageURL: 'https://via.placeholder.com/362x200',
-  },
-  {
-    title: 'Bohemian Rhapsody',
-    year: '2018',
-    description: 'Bohemian Rhapsody is a foot-stomping celebration of Queen, their music and their extraordinary lead singer Freddie Mercury. Freddie defied stereotypes and shattered convention to become one of the most beloved entertainers on the planet.',
-    imageURL: 'https://via.placeholder.com/362x200',
-  },
-  {
-    title: 'The Incredibles 2',
-    year: '2018',
-    description: 'Everyone’s favorite family of superheroes is back in “Incredibles 2” – but this time Helen is in the spotlight, leaving Bob at home with Violet and Dash to navigate the day-to-day heroics of “normal” life.',
-    imageURL: 'https://via.placeholder.com/362x200',
-  },
-]
+const API_KEY = KEYS.AIRTABLE_API
 
 class App extends Component {
+
+  state = {
+    movies: []
+  }
+
+  componentDidMount() {
+    fetch(`https://api.airtable.com/v0/appPkOV06IV91Fcsa/Favorites?api_key=${API_KEY}`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ movies: data.records })
+      })
+      .catch(err => console.log(err))
+  }
+
   render() {
+    console.log(this.state)
     return (
       <div className="container mt-5">
         <div className="row">
           <div className="col">
             <div className="card-deck">
-              {movieData.map(movie => <MovieCard {...movie} />)}
+              {this.state.movies.map(movie => <MovieCard key={movie.id} {...movie.fields} />)}
             </div>
           </div>
         </div>
